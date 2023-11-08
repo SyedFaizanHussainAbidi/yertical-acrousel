@@ -1,0 +1,164 @@
+<?/* Template Name: Test_Version */ ?>
+<?php get_header();?>
+
+
+
+<style>
+.col-md-6.cols-tester {
+    padding: 10px;
+}
+</style>
+
+<section class="tester">
+    <div class="container tester">
+
+        <?php if (have_rows('tester')) :
+
+            function format_filesize($bytes)
+            {
+                $kb = $bytes / 1024;
+                $mb = $kb / 1024;
+                if ($mb >= 1) {
+                    return round($mb, 2) . ' MB';
+                } elseif ($kb >= 1) {
+                    return round($kb, 2) . ' KB';
+                } else {
+                    return $bytes . ' bytes';
+                }
+            }
+
+        ?>
+
+            <div class="row tester">
+                <?php while (have_rows('tester')) : the_row();
+                    $imageb = get_sub_field('before');
+                    $imagea = get_sub_field('after');
+
+                    if ($imageb && $imagea) {
+                        // Extract information from 'before' field.
+                        $imageb_url = $imageb['url'];
+                        $imageb_extension = pathinfo($imageb_url, PATHINFO_EXTENSION);
+                        $imageb_name = $imageb['title'];
+                        $imageb_resolution = wp_get_attachment_image_src($imageb['ID'], 'full');
+                        $imageb_size = filesize(get_attached_file($imageb['ID']));
+
+                        // Extract information from 'after' field.
+                        $imagea_url = $imagea['url'];
+                        $imagea_extension = pathinfo($imagea_url, PATHINFO_EXTENSION);
+                        $imagea_name = $imagea['title'];
+                        $imagea_resolution = wp_get_attachment_image_src($imagea['ID'], 'full');
+                        $imagea_size = filesize(get_attached_file($imagea['ID']));
+
+                        // Now you can use this information in your HTML markup.
+                        ?>
+                        <div class="col-md-6 cols-tester">
+                            <img src="<?php echo esc_attr($imageb_url); ?>" alt="" width="100%" class="before imgs" onmousemove="imageZoom(event)">
+                            <h2><?php echo esc_html($imageb_name); ?></h2>
+                            <p>Extension: <?php echo esc_html($imageb_extension); ?></p>
+                            <p>Resolution: <?php echo esc_html($imageb_resolution[1] . 'x' . $imageb_resolution[2]); ?></p>
+                            <p>Size: <?php echo esc_html(format_filesize($imageb_size)); ?></p>
+                        </div>
+                        <div class="col-md-6 cols-tester">
+                            <img src="<?php echo esc_attr($imagea_url); ?>" alt="" width="100%" class="after imgs" onmousemove="imageZoom(event)">
+                            <h2><?php echo esc_html($imagea_name); ?></h2>
+                            <p>Extension: <?php echo esc_html($imagea_extension); ?></p>
+                            <p>Resolution: <?php echo esc_html($imagea_resolution[1] . 'x' . $imagea_resolution[2]); ?></p>
+                            <p>Size: <?php echo esc_html(format_filesize($imagea_size)); ?></p>
+                        </div>
+                <?php }
+                endwhile;
+                ?>
+            </div>
+        <?php endif; ?>
+    </div>
+</section>
+<script>
+    function imageZoom(event) {
+        var img = event.target;
+        var cx = 1.5; // Adjust the scaling factor as needed
+
+        var x = event.offsetX;
+        var y = event.offsetY;
+
+        var transform = `scale(${cx})`;
+        var transformOrigin = `${x}px ${y}px`;
+
+        img.style.transform = transform;
+        img.style.transformOrigin = transformOrigin;
+    }
+
+    // Reset the image to its original state on mouse out
+    document.querySelectorAll(".imgs").forEach(function(img) {
+        img.addEventListener("mouseout", function (event) {
+            event.target.style.transform = "scale(1)";
+        });
+    });
+</script>
+
+
+
+
+
+vertical carousel 
+
+
+   var slickCarousel = $('.slider-vertical');
+      slickCarousel.slick({
+          dots: false,
+          infinite: false,
+          speed: 300,
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          vertical: true,
+          verticalSwiping: true,
+          dots: false,
+          centerPadding: '50px',
+          arrows: true,
+          prevArrow: '<button type="button" data-role="none" class="slick-prev" aria-label="Previous" tabindex="0" role="button">Previous</button>',
+          nextArrow: '<button type="button" data-role="none" class="slick-next" aria-label="Next" tabindex="0" role="button">Next</button>',
+          responsive: [{
+                  breakpoint: 1024,
+                  settings: {
+                      slidesToShow: 1,
+                      slidesToScroll: 1,
+                      infinite: true,
+                  }
+              }, {
+                  breakpoint: 639,
+                  settings: {
+                      slidesToShow: 1,
+                      slidesToScroll: 1,
+                vertical: false,
+                verticalSwiping: false,
+                  }
+              }
+              // You can unslick at a given breakpoint now by adding:
+              // settings: "unslick"
+              // instead of a settings object
+          ]
+      });
+      
+//mouse wheel
+slickCarousel.mousewheel(function(e) {
+  e.preventDefault();
+      if (e.deltaY < 0) {
+          $(this).slick('slickNext'); 
+      }
+      else {
+          $(this).slick('slickPrev');
+      }
+  });
+
+
+function enqueue_slick_slider() {
+    wp_enqueue_style('slick-theme-css', 'https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css', array('slick-css'), '1.0');
+    wp_enqueue_style('slick-css', '//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css');
+    wp_enqueue_script('slick-js', '//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js', array('jquery'), '1.0', true);
+    wp_enqueue_script('mousewheel-js', '//cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js', array('jquery'), '1.0', true);
+
+}
+
+
+
+
+<?php get_footer();?>
